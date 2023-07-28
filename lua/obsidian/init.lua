@@ -41,5 +41,11 @@ H.apply_config = function(opts)
 end
 H.create_autocommands = function(opts) end
 H.create_default_hl = function(opts) end
+H.directory_exist = function(path)
+  return vim.fn.isdirectory(path)
+end
+H.create_dir_force = function(path)
+  vim.fn.mkdir(path, "p")
+end
 
 return Obsidian
