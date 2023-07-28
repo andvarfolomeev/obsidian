@@ -37,7 +37,7 @@ H.setup_config = function(opts)
   return opts
 end
 H.apply_config = function(opts)
-  Obsidian = opts
+  Obsidian.config = opts
 end
 H.create_autocommands = function(opts) end
 H.create_default_hl = function(opts) end
