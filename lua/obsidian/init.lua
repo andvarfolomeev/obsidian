@@ -47,5 +47,15 @@ end
 H.create_dir_force = function(path)
   vim.fn.mkdir(path, "p")
 end
+---
+---@param filename string
+---@return string
+H.resolve_md_extension = function(filename)
+  print(string.find(filename:lower(), "%.md$"))
+  if string.find(filename:lower(), "%.md$") then
+    return filename
+  end
+  return filename .. ".md"
+end
 
 return Obsidian
