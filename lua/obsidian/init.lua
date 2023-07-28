@@ -33,6 +33,10 @@ Obsidian.config = {
   mappings = {},
 }
 
+Obsidian.cd_vault = function()
+  vim.api.nvim_command("cd " .. Obsidian.config.dir)
+end
+
 H.setup_config = function(opts)
   return opts
 end
