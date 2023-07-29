@@ -21,20 +21,22 @@ Obsidian.setup = function(opts)
 end
 
 Obsidian.config = {
-  dir = "~/Documents/Brain",
+  dir = '~/Documents/Brain/',
   daily = {
     enabled = true,
-    dir = "daily/",
+    dir = 'daily/',
   },
   note = {
-    dir = "notes/",
-    transformator = function() end,
+    dir = 'notes/',
+    transformator = function(filename)
+      return filename
+    end,
   },
   mappings = {},
 }
 
 Obsidian.cd_vault = function()
-  vim.api.nvim_command("cd " .. Obsidian.config.dir)
+  vim.api.nvim_command('cd ' .. Obsidian.config.dir)
 end
 
 ---@param filename string
@@ -44,7 +46,7 @@ Obsidian.new_note = function(filename)
     filename = Obsidian.config.note.transformator(filename),
     create_dir = true,
   })
-  vim.api.nvim_command("edit " .. filepath)
+  vim.api.nvim_command('edit ' .. filepath)
 end
 
 Obsidian.open_today = function()
@@ -53,7 +55,7 @@ Obsidian.open_today = function()
     filename = os.date(Obsidian.config.daily.format),
     create_dir = true,
   })
-  vim.api.nvim_command("edit " .. filepath)
+  vim.api.nvim_command('edit ' .. filepath)
 end
 
 H.setup_config = function(opts)
@@ -68,7 +70,7 @@ H.directory_exist = function(path)
   return vim.fn.isdirectory(path)
 end
 H.create_dir_force = function(path)
-  vim.fn.mkdir(path, "p")
+  vim.fn.mkdir(path, 'p')
 end
 H.prepare_path = function(opts)
   local processed_filename = H.resolve_md_extension(opts.filename)
@@ -83,10 +85,10 @@ end
 ---@param filename string
 ---@return string
 H.resolve_md_extension = function(filename)
-  if string.find(filename:lower(), "%.md$") then
+  if string.find(filename:lower(), '%.md$') then
     return filename
   end
-  return filename .. ".md"
+  return filename .. '.md'
 end
 
 return Obsidian
