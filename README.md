@@ -2,8 +2,8 @@ Obsidian for Neovim (WIP)
 =============
 
 # TODO
-- [ ] cd vault
-- [ ] create new note
+- [x] cd vault
+- [x] create new note
 - [ ] apply template
 - [ ] search notes (integration with telescope/fzf.nvim)
 - [ ] open today note
