@@ -66,7 +66,6 @@ end
 ---@param filename string
 ---@return string
 H.resolve_md_extension = function(filename)
-  print(string.find(filename:lower(), "%.md$"))
   if string.find(filename:lower(), "%.md$") then
     return filename
   end
