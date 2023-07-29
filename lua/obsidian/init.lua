@@ -72,6 +72,15 @@ end
 H.create_dir_force = function(path)
   vim.fn.mkdir(path, "p")
 end
+H.prepare_path = function(opts)
+  local processed_filename = H.resolve_md_extension(opts.filename)
+  local dir = Obsidian.config.dir .. opts.subdir
+  if opts.create_dir and not H.directory_exist(dir) then
+    H.create_dir_force(dir)
+  end
+  local filepath = Obsidian.config.dir .. opts.subdir .. processed_filename
+  return filepath
+end
 ---
 ---@param filename string
 ---@return string
