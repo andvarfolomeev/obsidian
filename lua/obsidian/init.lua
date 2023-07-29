@@ -48,6 +48,16 @@ Obsidian.new_note = function(filename)
   vim.api.nvim_command("edit " .. filepath)
 end
 
+Obsidian.open_today = function()
+  local processed_filename = H.resolve_md_extension(os.date(Obsidian.config.daily.format))
+  local dir = Obsidian.config.dir .. Obsidian.config.daily.dir
+  if H.directory_exist(dir) then
+    H.create_dir_force(dir)
+  end
+  local filepath = Obsidian.config.dir .. Obsidian.config.note.dir .. processed_filename
+  vim.api.nvim_command("edit " .. filepath)
+end
+
 H.setup_config = function(opts)
   return opts
 end
