@@ -2,6 +2,9 @@
 ---
 --- Structure of project inpired by echasnovski/mini.nvim
 ---
+---@alias __obsidian_options table|nil
+---@alias __obsidian_prepare_path_options table
+---
 ---@diagnostic disable:undefined-field
 ---@diagnostic disable:discard-returns
 ---@diagnostic disable:unused-local
@@ -12,6 +15,7 @@ local H = {}
 
 local default_config = {}
 
+---@param opts __obsidian_options
 Obsidian.setup = function(opts)
   _G.Obsidian = Obsidian
   config = H.setup_config(opts)
@@ -58,20 +62,40 @@ Obsidian.open_today = function()
   vim.api.nvim_command('edit ' .. filepath)
 end
 
+---Validating user configuration that it is correct
+---@param opts __obsidian_options
+---@return __obsidian_options
 H.setup_config = function(opts)
   return opts
 end
+
+---Apply user configuration
+---@param opts __obsidian_options
 H.apply_config = function(opts)
   Obsidian.config = opts
 end
+
+---@param opts __obsidian_options
 H.create_autocommands = function(opts) end
+
+---@param opts __obsidian_options
 H.create_default_hl = function(opts) end
+
+---@param path string
+---@return boolean
 H.directory_exist = function(path)
-  return vim.fn.isdirectory(path)
+  return vim.fn.isdirectory(path) == 1
 end
+
+---@param path string
 H.create_dir_force = function(path)
   vim.fn.mkdir(path, 'p')
 end
+
+---That add markdown extension to end of file and create subdirectory
+---if it is settled and not already created
+---@param opts __obsidian_prepare_path_options
+---@return string
 H.prepare_path = function(opts)
   local processed_filename = H.resolve_md_extension(opts.filename)
   local dir = Obsidian.config.dir .. opts.subdir
@@ -81,7 +105,8 @@ H.prepare_path = function(opts)
   local filepath = Obsidian.config.dir .. opts.subdir .. processed_filename
   return filepath
 end
----
+
+---That add markdown extension to end of file
 ---@param filename string
 ---@return string
 H.resolve_md_extension = function(filename)
