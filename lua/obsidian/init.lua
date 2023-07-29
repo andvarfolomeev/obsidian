@@ -39,22 +39,20 @@ end
 
 ---@param filename string
 Obsidian.new_note = function(filename)
-  local processed_filename = H.resolve_md_extension(Obsidian.config.note.transformator(filename))
-  local dir = Obsidian.config.dir .. Obsidian.config.note.dir
-  if H.directory_exist(dir) then
-    H.create_dir_force(dir)
-  end
-  local filepath = Obsidian.config.dir .. Obsidian.config.note.dir .. processed_filename
+  local filepath = H.prepare_path({
+    subdir = Obsidian.config.note.dir,
+    filename = Obsidian.config.note.transformator(filename),
+    create_dir = true,
+  })
   vim.api.nvim_command("edit " .. filepath)
 end
 
 Obsidian.open_today = function()
-  local processed_filename = H.resolve_md_extension(os.date(Obsidian.config.daily.format))
-  local dir = Obsidian.config.dir .. Obsidian.config.daily.dir
-  if H.directory_exist(dir) then
-    H.create_dir_force(dir)
-  end
-  local filepath = Obsidian.config.dir .. Obsidian.config.note.dir .. processed_filename
+  local filepath = H.prepare_path({
+    subdir = Obsidian.config.daily.dir,
+    filename = os.date(Obsidian.config.daily.format),
+    create_dir = true,
+  })
   vim.api.nvim_command("edit " .. filepath)
 end
 
