@@ -6,4 +6,4 @@ Obsidian for Neovim (WIP)
 - [x] create new note
 - [ ] apply template
 - [ ] search notes (integration with telescope/fzf.nvim)
-- [ ] open today note
+- [x] open today note
