@@ -132,6 +132,16 @@ Obsidian.select_template_telescope = function(callback)
   })
 end
 
+Obsidian.search_note = function(callback)
+  local actions = require('telescope.actions')
+  local action_state = require('telescope.actions.state')
+  local find_files = require('telescope.builtin').find_files
+  find_files({
+    prompt_title = 'Select template',
+    cwd = Obsidian.config.dir,
+  })
+end
+
 ---Validating user configuration that it is correct
 ---@param opts __obsidian_options
 ---@return __obsidian_options
