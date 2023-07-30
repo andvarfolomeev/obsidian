@@ -150,7 +150,7 @@ end
 ---@param path string
 ---@return string
 H.read_file = function(path)
-  local lines = vim.fn.readfile(path)
+  local lines = vim.fn.readfile(vim.fn.expand(path))
   local content = table.concat(lines, '\n')
   return content
 end
