@@ -135,7 +135,7 @@ end
 ---Apply user configuration
 ---@param opts __obsidian_options
 H.apply_config = function(opts)
-  Obsidian.config = opts
+  Obsidian.config = vim.tbl_deep_extend('force', Obsidian.config, opts)
 end
 
 ---@param opts __obsidian_options
