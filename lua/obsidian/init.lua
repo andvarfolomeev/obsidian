@@ -4,6 +4,7 @@
 ---
 ---@alias __obsidian_options table|nil
 ---@alias __obsidian_prepare_path_options table
+---@alias __obsidian_generate_template_options table
 ---
 ---@diagnostic disable:undefined-field
 ---@diagnostic disable:discard-returns
@@ -62,6 +63,36 @@ Obsidian.open_today = function()
   vim.api.nvim_command('edit ' .. filepath)
 end
 
+---@param opts __obsidian_generate_template_options
+Obsidian.generate_template = function(opts)
+  local title = opts.filename:gsub('%.md$', '')
+  local date = os.date('%Y-%m-%d')
+  local time = os.date('%H-%M')
+  return opts.template_content
+      :gsub('{{%s*title%s*}}', title)
+      :gsub('{{%s*date%s*}}', date)
+      :gsub('{{%s*time%s*}}', time)
+end
+
+---Insert template to current buffer
+---@param template_path string
+Obsidian.insert_template = function(template_path)
+  local processed_template = Obsidian.generate_template({
+    template_content = H.read_file(template_path),
+    filename = vim.fn.expand('%:t'),
+  })
+  vim.api.nvim_paste(processed_template, true, 1)
+end
+
+---@param callback function
+Obsidian.select_template = function(callback)
+  local template_files =
+      vim.fn.glob(Obsidian.config.templates.dir .. '*', false, true)
+  vim.ui.select(template_files, {
+    prompt = 'Select template: ',
+  }, callback)
+end
+
 ---Validating user configuration that it is correct
 ---@param opts __obsidian_options
 ---@return __obsidian_options
@@ -114,6 +145,14 @@ H.resolve_md_extension = function(filename)
     return filename
   end
   return filename .. '.md'
+end
+
+---@param path string
+---@return string
+H.read_file = function(path)
+  local lines = vim.fn.readfile(path)
+  local content = table.concat(lines, '\n')
+  return content
 end
 
 return Obsidian
