@@ -49,9 +49,6 @@ Obsidian for Neovim (WIP)
   },
   opts = {
     dir = '~/Documents/SyncObsidian/',
-    transformator = function(filename)
-    return "123"
-    end
   },
 },
 ```
