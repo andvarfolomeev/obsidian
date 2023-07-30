@@ -85,12 +85,44 @@ Obsidian.insert_template = function(template_path)
 end
 
 ---@param callback function
-Obsidian.select_template = function(callback)
+---@param method_str string
+Obsidian.select_template = function(callback, method_str)
+  local methods = {
+    native = Obsidian.select_template_native,
+    telescope = Obsidian.select_template_telescope,
+  }
+  local method = methods[method_str]
+  if method then
+    method(callback)
+  else
+    Obsidian.select_template_native(callback)
+  end
+end
+
+Obsidian.select_template_native = function(callback)
   local template_files =
       vim.fn.glob(Obsidian.config.templates.dir .. '*', false, true)
   vim.ui.select(template_files, {
     prompt = 'Select template: ',
   }, callback)
+end
+
+Obsidian.select_template_telescope = function(callback)
+  local actions = require('telescope.actions')
+  local action_state = require('telescope.actions.state')
+  local find_files = require('telescope.builtin').find_files
+  find_files({
+    prompt_title = 'Select template',
+    cwd = Obsidian.config.templates.dir,
+    attach_mappings = function(prompt_bufnr, map)
+      actions.select_default:replace(function()
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        callback(Obsidian.config.templates.dir .. selection[1])
+      end)
+      return true
+    end,
+  })
 end
 
 ---Validating user configuration that it is correct
