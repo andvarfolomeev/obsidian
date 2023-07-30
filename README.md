@@ -8,6 +8,9 @@ Obsidian for Neovim (WIP)
     - [x] generate template
     - [x] insert template
     - [x] selection of template
+    - [x] search templates with ```vim.fn.glob``` and ```vim.ui.select```
+    - [x] search templates with telescope
     - [ ] support of Moment.js format tokens for ```{{date}}``` and ```{{time}}```
-- [ ] search notes (integration with telescope/fzf.nvim)
+- [x] search notes (integration with telescope/fzf.nvim)
 - [x] open today note
+- [ ] backlinks
