@@ -1,0 +1,111 @@
+==============================================================================
+------------------------------------------------------------------------------
+Obsidian
+
+Structure of project inpired by echasnovski/mini.nvim
+
+
+------------------------------------------------------------------------------
+                                                              *Obsidian.setup()*
+                            `Obsidian.setup`({opts})
+Parameters~
+{opts} `(table|nil)`
+
+------------------------------------------------------------------------------
+                                                           *Obsidian.new_note()*
+                        `Obsidian.new_note`({filename})
+Parameters~
+{filename} `(string)`
+
+------------------------------------------------------------------------------
+                                                  *Obsidian.generate_template()*
+                      `Obsidian.generate_template`({opts})
+Parameters~
+{opts} `(table)`
+
+
+------------------------------------------------------------------------------
+                                                    *Obsidian.insert_template()*
+                  `Obsidian.insert_template`({template_path})
+template to current buffer
+Parameters~
+{template_path} `(string)`
+
+------------------------------------------------------------------------------
+                                                    *Obsidian.select_template()*
+              `Obsidian.select_template`({callback}, {method_str})
+Parameters~
+{callback} `(function)`
+{method_str} `(string)`
+
+------------------------------------------------------------------------------
+                                                              *H.setup_config()*
+                            `H.setup_config`({opts})
+user configuration that it is correct
+Parameters~
+{opts} `(table|nil)`
+Return~
+`(table|nil)`
+
+------------------------------------------------------------------------------
+                                                              *H.apply_config()*
+                            `H.apply_config`({opts})
+user configuration
+Parameters~
+{opts} `(table|nil)`
+
+------------------------------------------------------------------------------
+                                                       *H.create_autocommands()*
+                        `H.create_autocommands`({opts})
+Parameters~
+{opts} `(table|nil)`
+
+------------------------------------------------------------------------------
+                                                         *H.create_default_hl()*
+                         `H.create_default_hl`({opts})
+Parameters~
+{opts} `(table|nil)`
+
+------------------------------------------------------------------------------
+                                                           *H.directory_exist()*
+                          `H.directory_exist`({path})
+Parameters~
+{path} `(string)`
+Return~
+`(boolean)`
+
+------------------------------------------------------------------------------
+                                                          *H.create_dir_force()*
+                          `H.create_dir_force`({path})
+Parameters~
+{path} `(string)`
+
+------------------------------------------------------------------------------
+                                                              *H.prepare_path()*
+                            `H.prepare_path`({opts})
+add markdown extension to end of file and create subdirectory
+it is settled and not already created
+Parameters~
+{opts} `(table)`
+Return~
+`(string)`
+
+------------------------------------------------------------------------------
+                                                      *H.resolve_md_extension()*
+                      `H.resolve_md_extension`({filename})
+add markdown extension to end of file
+Parameters~
+{filename} `(string)`
+Return~
+`(string)`
+
+------------------------------------------------------------------------------
+                                                                 *H.read_file()*
+                             `H.read_file`({path})
+Parameters~
+{path} `(string)`
+Return~
+`(string)`
+
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
