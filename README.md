@@ -7,7 +7,7 @@ I often use Obsidian to take daily notes and maintain my own knowledge base. Thi
 
 ```lua
 {
-  'ada0l/obisidian',
+  'ada0l/obsidian',
   keys = {
     {
       '<leader>oi',
