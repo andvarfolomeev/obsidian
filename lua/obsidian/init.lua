@@ -3,8 +3,6 @@
 --- Structure of project inpired by echasnovski/mini.nvim
 ---
 ---@alias __obsidian_options table|nil
----@alias __obsidian_prepare_path_options table
----@alias __obsidian_generate_template_options table
 ---
 ---@diagnostic disable:undefined-field
 ---@diagnostic disable:discard-returns
@@ -53,43 +51,44 @@ end
 
 ---@param filename string
 Obsidian.new_note = function(filename)
-  local filepath = H.prepare_path({
-    subdir = Obsidian.config.note.dir,
-    filename = Obsidian.config.note.transformator(filename),
-    create_dir = true,
-  })
+  local filepath = H.prepare_path(
+    Obsidian.config.note.transformator(filename),
+    Obsidian.config.note.dir,
+    true
+  )
   vim.api.nvim_command('edit ' .. filepath)
 end
 
 ---@param shift integer
 Obsidian.open_today = function(shift)
   local time = os.time() + (shift or 0)
-  local filepath = H.prepare_path({
-    subdir = Obsidian.config.daily.dir,
-    filename = os.date(Obsidian.config.daily.format, time),
-    create_dir = true,
-  })
+  local filepath = H.prepare_path(
+    tostring(os.date(Obsidian.config.daily.format, time)),
+    Obsidian.config.daily.dir,
+    true
+  )
   vim.api.nvim_command('edit ' .. filepath)
 end
 
----@param opts __obsidian_generate_template_options
-Obsidian.generate_template = function(opts)
-  local title = opts.filename:gsub('%.md$', '')
+---@param template_content string
+---@param filename string
+---@return string
+Obsidian.generate_template = function(template_content, filename)
+  local title_ = filename:gsub('%.md$', '')
   local date = os.date('%Y-%m-%d')
   local time = os.date('%H-%M')
-  return opts.template_content
-      :gsub('{{%s*title%s*}}', title)
+  local result = template_content
+      :gsub('{{%s*title%s*}}', title_)
       :gsub('{{%s*date%s*}}', date)
       :gsub('{{%s*time%s*}}', time)
+  return result
 end
 
 ---Insert template to current buffer
 ---@param template_path string
 Obsidian.insert_template = function(template_path)
-  local processed_template = Obsidian.generate_template({
-    template_content = H.read_file(template_path),
-    filename = vim.fn.expand('%:t'),
-  })
+  local processed_template =
+      Obsidian.generate_template(H.read_file(template_path), vim.fn.expand('%:t'))
   vim.api.nvim_paste(processed_template, true, 1)
 end
 
@@ -176,15 +175,17 @@ end
 
 ---That add markdown extension to end of file and create subdirectory
 ---if it is settled and not already created
----@param opts __obsidian_prepare_path_options
+---@param filename string
+---@param subdir string
+---@param create_dir boolean
 ---@return string
-H.prepare_path = function(opts)
-  local processed_filename = H.resolve_md_extension(opts.filename)
-  local dir = Obsidian.config.dir .. opts.subdir
-  if opts.create_dir and not H.directory_exist(dir) then
+H.prepare_path = function(filename, subdir, create_dir)
+  local processed_filename = H.resolve_md_extension(filename)
+  local dir = Obsidian.config.dir .. subdir
+  if create_dir and not H.directory_exist(dir) then
     H.create_dir_force(dir)
   end
-  local filepath = Obsidian.config.dir .. opts.subdir .. processed_filename
+  local filepath = Obsidian.config.dir .. subdir .. processed_filename
   return filepath
 end
 
