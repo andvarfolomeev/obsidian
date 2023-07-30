@@ -26,18 +26,25 @@ Obsidian.setup = function(opts)
 end
 
 Obsidian.config = {
-  dir = '~/Documents/Brain/',
+  dir = '~/ObsidianVault/',
   daily = {
-    enabled = true,
     dir = 'daily/',
+    format = '%Y-%m-%d',
+  },
+  templates = {
+    dir = 'templates/',
   },
   note = {
     dir = 'notes/',
+    ---@param filename string
+    ---@return string
     transformator = function(filename)
-      return filename
+      if filename ~= nil and filename ~= '' then
+        return filename
+      end
+      return string.format('%d', os.time())
     end,
   },
-  mappings = {},
 }
 
 Obsidian.cd_vault = function()
