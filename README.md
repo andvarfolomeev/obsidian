@@ -1,6 +1,8 @@
 Obsidian for Neovim (WIP)
 =============
 
+I often use Obsidian to take daily notes and maintain my own knowledge base. This plugin allows you to use the basic functionality to work with Obsidian vaults.
+
 # Configuration example with lazy.nvim
 
 ```lua
