@@ -18,6 +18,12 @@ Parameters~
 {filename} `(string)`
 
 ------------------------------------------------------------------------------
+                                                         *Obsidian.open_today()*
+                         `Obsidian.open_today`({shift})
+Parameters~
+{shift} `(integer)`
+
+------------------------------------------------------------------------------
                                                   *Obsidian.generate_template()*
                       `Obsidian.generate_template`({opts})
 Parameters~

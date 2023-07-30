@@ -61,10 +61,12 @@ Obsidian.new_note = function(filename)
   vim.api.nvim_command('edit ' .. filepath)
 end
 
-Obsidian.open_today = function()
+---@param shift integer
+Obsidian.open_today = function(shift)
+  local time = os.time() + (shift or 0)
   local filepath = H.prepare_path({
     subdir = Obsidian.config.daily.dir,
-    filename = os.date(Obsidian.config.daily.format),
+    filename = os.date(Obsidian.config.daily.format, time),
     create_dir = true,
   })
   vim.api.nvim_command('edit ' .. filepath)

@@ -42,6 +42,16 @@ I often use Obsidian to take daily notes and maintain my own knowledge base. Thi
       desc = 'Insert template',
     },
     {
+      '<leader>od',
+      function ()
+        vim.ui.input({ prompt = 'Write shift in days: ' }, function(input_shift)
+          local shift = tonumber(input_shift) * 60 * 60 * 24
+          Obsidian.open_today(shift)
+        end)
+      end,
+      desc = 'Open daily node with shift'
+    },
+    {
       '<leader>os',
       function()
         Obsidian.search_note()
@@ -90,7 +100,7 @@ I often use Obsidian to take daily notes and maintain my own knowledge base. Thi
 # Available functions
 
 - ```obsidian.cd_vault()``` - This moves your working directory to the vault.
-- ```obsidian.open_today()``` - This opens today note in daily note directory.
+- ```obsidian.open_today(shift)``` - This opens today note in daily note directory. The shift parameter is optional, but you can pass in order to set the offset from the current time.
 - ```obsidian.new_note(note_name)``` - This opens note in general note directory.
 - ```obsidian.select_template(callback, method)``` - This opens the note template selection and passes the selected path to the selected template to the callback. The second parameter specifies the method for displaying the modal select box. Use ```"native"``` if you don't want to use dependencies. Use a ```"telescope"``` if you already use a telescope.
 - ```Obsidian.insert_template(template_path)``` - This applies the template and pastes it into the buffer.
