@@ -88,6 +88,15 @@ Obsidian for Neovim (WIP)
 }
 ```
 
+# Available functions
+
+- ```obsidian.cd_vault()``` - This moves your working directory to the vault.
+- ```obsidian.open_today()``` - This opens today note in daily note directory.
+- ```obsidian.new_note(note_name)``` - This opens note in general note directory.
+- ```obsidian.select_template(callback, method)``` - This opens the note template selection and passes the selected path to the selected template to the callback. The second parameter specifies the method for displaying the modal select box. Use ```"native"``` if you don't want to use dependencies. Use a ```"telescope"``` if you already use a telescope.
+- ```Obsidian.insert_template(template_path)``` - This applies the template and pastes it into the buffer.
+- ```Obsidian.search_note()``` - This searches notes in the vault. Now it only works with a telescope.
+
 # TODO
 - [x] cd vault
 - [x] create new note
