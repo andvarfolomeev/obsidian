@@ -1,20 +1,54 @@
---- Obsidian
+--- *obsidian* provide base Obsidian functionality to your Neovim
+--- *Obsidian*
+---
+--- MIT License Copyright (c) 2023 Andrey Varfolomeev
+---
+--- ==============================================================================
+---
+--- That aimed to provide base Obsidian functionality to Neovim, but stay
+--- stupid simple.
+---
+--- # Features ~
+---
+--- - Opening vault
+---
+--- - Creating new notes
+---
+--- - Creating/Opening daily notes
+---
+--- - Selecting and inserting templates to buffer with support placeholders
+---   like: ``{{title}}``, ``{{date}}``, ``{time}}``
+---
+--- - Searching notes with Telescope integration
+---
+--- - Searching backlinks of current note
+---
+--- # Setup ~
+---
+--- This module needs a setup with `require('obsidian').setup({})` (replace
+--- `{}` with your `config` table). It will create global Lua table `Obsidian`
+--- which you can use for scripting or manually (with `:lua Obsidian.*`).
+---
+--- See |Obsidian.config| for available config settings.
 ---
 --- Structure of project inpired by echasnovski/mini.nvim
----
----@alias __obsidian_options table|nil
----
+
 ---@diagnostic disable:undefined-field
 ---@diagnostic disable:discard-returns
 ---@diagnostic disable:unused-local
 ---@diagnostic disable:cast-local-type
 
+---@alias __obsidian_select_method string - one of selection method. It can equal 'native' or 'telescope'
+
+-- Module definition ==========================================================
 local Obsidian = {}
 local H = {}
 
 local default_config = {}
 
----@param opts __obsidian_options
+---@param opts table|nil Module config table. See |Obsidian.config|.
+---
+---@usage `require('Obsidian').setup({})` (replace `{}` with your `config` table)
 Obsidian.setup = function(opts)
   _G.Obsidian = Obsidian
   config = H.setup_config(opts)
@@ -23,17 +57,29 @@ Obsidian.setup = function(opts)
   H.create_default_hl()
 end
 
+--stylua: ignore
+--- Module config
+---
+--- Default values:
+---@eval return MiniDoc.afterlines_to_code(MiniDoc.current.eval_section)
+
 Obsidian.config = {
+  -- Optional, the path to vault directory
   dir = '~/ObsidianVault/',
+
   daily = {
-    dir = 'daily/',
-    format = '%Y-%m-%d',
+    -- Optional, the path to daily notes directory
+    dir = 'daily/',      -- Optional, It is mean that daily note directory is ~/ObsidianVault/daily/
+    format = '%Y-%m-%d', -- Optional, format file names
   },
   templates = {
+    -- Optional, the path to templates directory
     dir = 'templates/',
   },
   note = {
+    -- Optional, the path to general notes directory
     dir = 'notes/',
+    -- Optional, the function for fransform name of note
     ---@param filename string
     ---@return string
     transformator = function(filename)
@@ -44,11 +90,28 @@ Obsidian.config = {
     end,
   },
 }
+--minidoc_afterlines_end
 
+--- Open vault directory
+---
+---  Common way to use this function:
+---
+--- - `Obsidian.cd_vault()` - open directory - This moves your working directory to the vault.
 Obsidian.cd_vault = function()
   vim.api.nvim_command('cd ' .. Obsidian.config.dir)
 end
 
+--- Create new note
+---
+--- Common ways to use this function:
+---
+--- - `Obsidian.new_note('new-note')` - create note in |Obsidian.config.note.dir|.
+---
+--- - `Obsidian.new_note('new-note.md')` - create note in |Obsidian.config.note.dir|.
+---
+--- - `vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)`
+---   `  Obsidian.new_note(name)`
+---   `end)` - create note in |Obsidian.config.note.dir|.
 ---@param filename string
 Obsidian.new_note = function(filename)
   local filepath = H.prepare_path(
@@ -59,6 +122,16 @@ Obsidian.new_note = function(filename)
   vim.api.nvim_command('edit ' .. filepath)
 end
 
+--- Open today note
+---
+--- Common ways to use this function:
+---
+--- - `Obsidian.open_today()` - open today note in |Obsidian.config.daily.dir| 
+---   with |Obsidian.cofnig.daily.format| format.
+---
+--- - `vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)`
+---      `Obsidian.new_note(name)`
+---   `end)` - also you can use it to open daily note with some time shift.
 ---@param shift integer
 Obsidian.open_today = function(shift)
   local time = os.time() + (shift or 0)
@@ -70,6 +143,9 @@ Obsidian.open_today = function(shift)
   vim.api.nvim_command('edit ' .. filepath)
 end
 
+--- Generate template
+---
+--- Generates text from the template body to be inserted into the note
 ---@param template_content string
 ---@param filename string
 ---@return string
@@ -84,7 +160,8 @@ Obsidian.generate_template = function(template_content, filename)
   return result
 end
 
----Insert template to current buffer
+--- Insert template to current buffer
+--- 
 ---@param template_path string
 Obsidian.insert_template = function(template_path)
   local processed_template =
@@ -92,7 +169,19 @@ Obsidian.insert_template = function(template_path)
   vim.api.nvim_paste(processed_template, true, 1)
 end
 
----@param method_str string
+--- Select template
+---
+--- Common ways to use this function:
+---
+--- - `Obsidian.select_template()`- This brings up a vim.ui.select for selecting a 
+---   template for later pasting into current buffer. 
+---
+--- - `Obsidian.select_template('native')` - This brings up a vim.ui.select for selecting a 
+---   template for later pasting into current buffer. 
+---
+--- - `Obsidian.select_template('telescope')`- This brings up a telescope for selecting a 
+---   template for later pasting into current buffer. 
+---@param method_str __obsidian_select_method
 Obsidian.select_template = function(method_str)
   local methods = {
     native = Obsidian.select_template_native,
@@ -107,6 +196,7 @@ Obsidian.select_template = function(method_str)
   end
 end
 
+---@param callback function
 Obsidian.select_template_native = function(callback)
   local template_files =
       vim.fn.glob(Obsidian.config.dir .. Obsidian.config.templates.dir .. '*', false, true)
@@ -115,6 +205,7 @@ Obsidian.select_template_native = function(callback)
   }, callback)
 end
 
+---@param callback function
 Obsidian.select_template_telescope = function(callback)
   local actions = require('telescope.actions')
   local action_state = require('telescope.actions.state')
@@ -133,7 +224,13 @@ Obsidian.select_template_telescope = function(callback)
   })
 end
 
-Obsidian.search_note = function(callback)
+--- Search note
+---
+--- Common ways to use this function:
+---
+--- - `Obsidian.search_note()` - This brings up a telescope for search a 
+---   notes in |Obsidian.config.dir|
+Obsidian.search_note = function()
   local actions = require('telescope.actions')
   local action_state = require('telescope.actions.state')
   local find_files = require('telescope.builtin').find_files
@@ -143,8 +240,19 @@ Obsidian.search_note = function(callback)
   })
 end
 
----comment
----@param method_str string
+--- Select backlinks
+---
+--- Common ways to use this function:
+---
+--- - `Obsidian.select_backlinks()` - This brings up a vim.ui.select for search a 
+---   backlinks for current note.
+---
+--- - `Obsidian.select_backlinks('native')` - This brings up a vim.ui.select for search a 
+---   backlinks for current note.
+---
+--- - `Obsidian.select_backlinks('telescope')` - This brings up a telescope for search a 
+---   backlinks for current note.
+---@param method_str __obsidian_select_method
 Obsidian.select_backlinks = function(method_str)
   local methods = {
     native = Obsidian.select_backlinks_native,
@@ -209,24 +317,25 @@ Obsidian.select_backlinks_telescope = function()
       :find()
 end
 
+-- Helper functionality =======================================================
 
 ---Validating user configuration that it is correct
----@param opts __obsidian_options
----@return __obsidian_options
+---@param opts table|nil
+---@return table|nil
 H.setup_config = function(opts)
   return opts
 end
 
 ---Apply user configuration
----@param opts __obsidian_options
+---@param opts table|nil
 H.apply_config = function(opts)
   Obsidian.config = vim.tbl_deep_extend('force', Obsidian.config, opts)
 end
 
----@param opts __obsidian_options
+---@param opts table|nil
 H.create_autocommands = function(opts) end
 
----@param opts __obsidian_options
+---@param opts table|nil
 H.create_default_hl = function(opts) end
 
 ---@param path string

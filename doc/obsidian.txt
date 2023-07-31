@@ -1,117 +1,203 @@
 ==============================================================================
 ------------------------------------------------------------------------------
-Obsidian
+*obsidian* provide base Obsidian functionality to your Neovim
+*Obsidian*
+
+MIT License Copyright (c) 2023 Andrey Varfolomeev
+
+==============================================================================
+
+That aimed to provide base Obsidian functionality to Neovim, but stay
+stupid simple.
+
+# Features ~
+
+- Opening vault
+
+- Creating new notes
+
+- Creating/Opening daily notes
+
+- Selecting and inserting templates to buffer with support placeholders
+  like: ``{{title}}``, ``{{date}}``, ``{time}}``
+
+- Searching notes with Telescope integration
+
+- Searching backlinks of current note
+
+# Setup ~
+
+This module needs a setup with `require('obsidian').setup({})` (replace
+`{}` with your `config` table). It will create global Lua table `Obsidian`
+which you can use for scripting or manually (with `:lua Obsidian.*`).
+
+See |Obsidian.config| for available config settings.
 
 Structure of project inpired by echasnovski/mini.nvim
-
 
 ------------------------------------------------------------------------------
                                                               *Obsidian.setup()*
                             `Obsidian.setup`({opts})
 Parameters~
-{opts} `(table|nil)`
+{opts} `(table|nil)` Module config table. See |Obsidian.config|.
+
+Usage~
+`require('Obsidian').setup({})` (replace `{}` with your `config` table)
+
+------------------------------------------------------------------------------
+Module config
+
+Default values:
+>
+
+  Obsidian.config = {
+    -- Optional, the path to vault directory
+    dir = '~/ObsidianVault/',
+
+    daily = {
+      -- Optional, the path to daily notes directory
+      dir = 'daily/',      -- Optional, It is mean that daily note directory is ~/ObsidianVault/daily/
+      format = '%Y-%m-%d', -- Optional, format file names
+    },
+    templates = {
+      -- Optional, the path to templates directory
+      dir = 'templates/',
+    },
+    note = {
+      -- Optional, the path to general notes directory
+      dir = 'notes/',
+      -- Optional, the function for fransform name of note
+      ---@param filename string
+      ---@return string
+      transformator = function(filename)
+        if filename ~= nil and filename ~= '' then
+          return filename
+        end
+        return string.format('%d', os.time())
+      end,
+    },
+  }
+<
+
+------------------------------------------------------------------------------
+                                                           *Obsidian.cd_vault()*
+                             `Obsidian.cd_vault`()
+Open vault directory
+
+ Common way to use this function:
+
+- `Obsidian.cd_vault()` - open directory - This moves your working directory to the vault.
 
 ------------------------------------------------------------------------------
                                                            *Obsidian.new_note()*
                         `Obsidian.new_note`({filename})
+Create new note
+
+Common ways to use this function:
+
+- `Obsidian.new_note('new-note')` - create note in |Obsidian.config.note.dir|.
+
+- `Obsidian.new_note('new-note.md')` - create note in |Obsidian.config.note.dir|.
+
+- `vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)`
+  `  Obsidian.new_note(name)`
+  `end)` - create note in |Obsidian.config.note.dir|.
 Parameters~
 {filename} `(string)`
 
 ------------------------------------------------------------------------------
                                                          *Obsidian.open_today()*
                          `Obsidian.open_today`({shift})
+Open today note
+
+Common ways to use this function:
+
+- `Obsidian.open_today()` - open today note in |Obsidian.config.daily.dir| 
+  with |Obsidian.cofnig.daily.format| format.
+
+- `vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)`
+     `Obsidian.new_note(name)`
+  `end)` - also you can use it to open daily note with some time shift.
 Parameters~
 {shift} `(integer)`
 
 ------------------------------------------------------------------------------
                                                   *Obsidian.generate_template()*
-                      `Obsidian.generate_template`({opts})
-Parameters~
-{opts} `(table)`
+          `Obsidian.generate_template`({template_content}, {filename})
+Generate template
 
-
-------------------------------------------------------------------------------
-                                                    *Obsidian.insert_template()*
-                  `Obsidian.insert_template`({template_path})
-template to current buffer
+Generates text from the template body to be inserted into the note
 Parameters~
-{template_path} `(string)`
-
-------------------------------------------------------------------------------
-                                                    *Obsidian.select_template()*
-              `Obsidian.select_template`({callback}, {method_str})
-Parameters~
-{callback} `(function)`
-{method_str} `(string)`
-
-------------------------------------------------------------------------------
-                                                              *H.setup_config()*
-                            `H.setup_config`({opts})
-user configuration that it is correct
-Parameters~
-{opts} `(table|nil)`
-Return~
-`(table|nil)`
-
-------------------------------------------------------------------------------
-                                                              *H.apply_config()*
-                            `H.apply_config`({opts})
-user configuration
-Parameters~
-{opts} `(table|nil)`
-
-------------------------------------------------------------------------------
-                                                       *H.create_autocommands()*
-                        `H.create_autocommands`({opts})
-Parameters~
-{opts} `(table|nil)`
-
-------------------------------------------------------------------------------
-                                                         *H.create_default_hl()*
-                         `H.create_default_hl`({opts})
-Parameters~
-{opts} `(table|nil)`
-
-------------------------------------------------------------------------------
-                                                           *H.directory_exist()*
-                          `H.directory_exist`({path})
-Parameters~
-{path} `(string)`
-Return~
-`(boolean)`
-
-------------------------------------------------------------------------------
-                                                          *H.create_dir_force()*
-                          `H.create_dir_force`({path})
-Parameters~
-{path} `(string)`
-
-------------------------------------------------------------------------------
-                                                              *H.prepare_path()*
-                            `H.prepare_path`({opts})
-add markdown extension to end of file and create subdirectory
-it is settled and not already created
-Parameters~
-{opts} `(table)`
-Return~
-`(string)`
-
-------------------------------------------------------------------------------
-                                                      *H.resolve_md_extension()*
-                      `H.resolve_md_extension`({filename})
-add markdown extension to end of file
-Parameters~
+{template_content} `(string)`
 {filename} `(string)`
 Return~
 `(string)`
 
 ------------------------------------------------------------------------------
-                                                                 *H.read_file()*
-                             `H.read_file`({path})
+                                                    *Obsidian.insert_template()*
+                  `Obsidian.insert_template`({template_path})
+Insert template to current buffer
+
 Parameters~
-{path} `(string)`
-Return~
-`(string)`
+{template_path} `(string)`
+
+------------------------------------------------------------------------------
+                                                    *Obsidian.select_template()*
+                    `Obsidian.select_template`({method_str})
+Select template
+
+Common ways to use this function:
+
+- `Obsidian.select_template()`- This brings up a vim.ui.select for selecting a 
+  template for later pasting into current buffer. 
+
+- `Obsidian.select_template('native')` - This brings up a vim.ui.select for selecting a 
+  template for later pasting into current buffer. 
+
+- `Obsidian.select_template('telescope')`- This brings up a telescope for selecting a 
+  template for later pasting into current buffer. 
+Parameters~
+{method_str} `(string)` - one of selection method. It can equal 'native' or 'telescope'
+
+------------------------------------------------------------------------------
+                                             *Obsidian.select_template_native()*
+                 `Obsidian.select_template_native`({callback})
+Parameters~
+{callback} `(function)`
+
+------------------------------------------------------------------------------
+                                          *Obsidian.select_template_telescope()*
+                `Obsidian.select_template_telescope`({callback})
+Parameters~
+{callback} `(function)`
+
+------------------------------------------------------------------------------
+                                                        *Obsidian.search_note()*
+                            `Obsidian.search_note`()
+Search note
+
+Common ways to use this function:
+
+- `Obsidian.search_note()` - This brings up a telescope for search a 
+  notes in |Obsidian.config.dir|
+
+------------------------------------------------------------------------------
+                                                   *Obsidian.select_backlinks()*
+                   `Obsidian.select_backlinks`({method_str})
+Select backlinks
+
+Common ways to use this function:
+
+- `Obsidian.select_backlinks()` - This brings up a vim.ui.select for search a 
+  backlinks for current note.
+
+- `Obsidian.select_backlinks('native')` - This brings up a vim.ui.select for search a 
+  backlinks for current note.
+
+- `Obsidian.select_backlinks('telescope')` - This brings up a telescope for search a 
+  backlinks for current note.
+Parameters~
+{method_str} `(string)` - one of selection method. It can equal 'native' or 'telescope'
 
 
  vim:tw=78:ts=8:noet:ft=help:norl:
