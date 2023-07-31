@@ -138,7 +138,7 @@ Obsidian.search_note = function(callback)
   local action_state = require('telescope.actions.state')
   local find_files = require('telescope.builtin').find_files
   find_files({
-    prompt_title = 'Select template',
+    prompt_title = 'Select note',
     cwd = Obsidian.config.dir,
   })
 end
