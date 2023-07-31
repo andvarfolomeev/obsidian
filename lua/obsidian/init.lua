@@ -143,7 +143,22 @@ Obsidian.search_note = function(callback)
   })
 end
 
-Obsidian.select_backlinks = function()
+---comment
+---@param method_str string
+Obsidian.select_backlinks = function(method_str)
+  local methods = {
+    native = Obsidian.select_backlinks_native,
+    telescope = Obsidian.select_backlinks_telescope,
+  }
+  local method = methods[method_str]
+  if method then
+    method(callback)
+  else
+    methods.native()
+  end
+end
+
+Obsidian.select_backlinks_native = function()
   local filename = vim.fn.expand('%:t'):gsub('%.md$', '')
   local query = '[[' .. filename
   local search_result = H.search_rg(query)
@@ -157,6 +172,43 @@ Obsidian.select_backlinks = function()
     vim.fn.cursor(match.cursor)
   end)
 end
+
+Obsidian.select_backlinks_telescope = function()
+  local pickers = require "telescope.pickers"
+  local finders = require "telescope.finders"
+  local conf = require("telescope.config").values
+  local actions = require('telescope.actions')
+  local action_state = require('telescope.actions.state')
+  local filename = vim.fn.expand('%:t'):gsub('%.md$', '')
+  local query = '[[' .. filename
+  local search_result = H.search_rg(query)
+  pickers.new({}, {
+    prompt_title = "colors",
+    finder = finders.new_table {
+      results = search_result,
+      entry_maker = function(match)
+        return {
+          value = match,
+          display = match.preview,
+          ordinal = match.preview,
+        }
+      end
+    },
+    attach_mappings = function(prompt_bufnr, map)
+      actions.select_default:replace(function()
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        local match = selection.value;
+        vim.api.nvim_command('edit ' .. match.path)
+        vim.fn.cursor(match.cursor)
+      end)
+      return true
+    end,
+    sorter = conf.generic_sorter({})
+  })
+      :find()
+end
+
 
 ---Validating user configuration that it is correct
 ---@param opts __obsidian_options
