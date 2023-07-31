@@ -82,35 +82,3 @@ See more details in [Features](#features) and [help file](doc/obsidian.txt).
   },
 },
 ```
-
-## Configuration options
-
-```lua
-{
-  -- Optional, the path to vault directory
-  dir = '~/ObsidianVault/',
-
-  daily = {
-    -- Optional, the path to daily notes directory
-    dir = 'daily/', -- Optional, It is mean that daily note directory is ~/ObsidianVault/daily/
-    format = '%Y-%m-%d', -- Optional, format file names
-  },
-  templates = {
-    -- Optional, the path to templates directory
-    dir = 'templates/',
-  },
-  note = {
-    -- Optional, the path to general notes directory
-    dir = 'notes/',
-    -- Optional, the function for fransform name of note
-    ---@param filename string
-    ---@return string
-    transformator = function(filename)
-      if filename ~= nil and filename ~= '' then
-        return filename
-      end
-      return string.format('%d', os.time())
-    end,
-  },
-}
-```
