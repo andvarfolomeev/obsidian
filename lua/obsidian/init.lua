@@ -143,6 +143,21 @@ Obsidian.search_note = function(callback)
   })
 end
 
+Obsidian.select_backlinks = function()
+  local filename = vim.fn.expand('%:t'):gsub('%.md$', '')
+  local query = '[[' .. filename
+  local search_result = H.search_rg(query)
+  vim.ui.select(search_result, {
+    prompt = "Go to",
+    format_item = function(match)
+      return match.preview
+    end
+  }, function(match)
+    vim.api.nvim_command('edit ' .. match.path)
+    vim.fn.cursor(match.cursor)
+  end)
+end
+
 ---Validating user configuration that it is correct
 ---@param opts __obsidian_options
 ---@return __obsidian_options
