@@ -92,18 +92,18 @@ Obsidian.insert_template = function(template_path)
   vim.api.nvim_paste(processed_template, true, 1)
 end
 
----@param callback function
 ---@param method_str string
-Obsidian.select_template = function(callback, method_str)
+Obsidian.select_template = function(method_str)
   local methods = {
     native = Obsidian.select_template_native,
     telescope = Obsidian.select_template_telescope,
   }
   local method = methods[method_str]
+  local callback = Obsidian.insert_template
   if method then
     method(callback)
   else
-    Obsidian.select_template_native(callback)
+    methods.native(callback)
   end
 end
 
