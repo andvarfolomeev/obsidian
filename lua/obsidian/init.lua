@@ -359,7 +359,7 @@ H.prepare_path = function(filename, subdir, create_dir)
   local processed_filename = H.resolve_md_extension(filename)
   local dir = Obsidian.config.dir .. subdir
   if create_dir and not H.directory_exist(dir) then
-    H.create_dir_force(dir)
+    H.create_dir_force(vim.fn.expand(dir))
   end
   local filepath = Obsidian.config.dir .. subdir .. processed_filename
   return filepath
