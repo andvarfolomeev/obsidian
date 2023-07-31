@@ -152,7 +152,7 @@ Obsidian.select_backlinks = function(method_str)
   }
   local method = methods[method_str]
   if method then
-    method(callback)
+    method()
   else
     methods.native()
   end
