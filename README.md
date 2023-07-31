@@ -3,7 +3,11 @@ Obsidian for Neovim (WIP)
 
 I often use Obsidian to take daily notes and maintain my knowledge base. This plugin allows you to use the basic functionality to work with Obsidian vaults.
 
-# Features
+For full experience needs [nvim-telescope/telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) plugin (some search related features don't work without it).
+
+See more details in [Features](#features) and [help file](doc/obsidian.txt).
+
+## Features
 
 - Opening vault
 - Creating new notes
@@ -12,7 +16,7 @@ I often use Obsidian to take daily notes and maintain my knowledge base. This pl
 - Searching notes with Telescope integration
 - Searching backlinks of the current note
 
-# Configuration example with lazy.nvim
+## Configuration example with lazy.nvim
 
 ```lua
 {
@@ -79,7 +83,7 @@ I often use Obsidian to take daily notes and maintain my knowledge base. This pl
 },
 ```
 
-# Configuration options
+## Configuration options
 
 ```lua
 {
