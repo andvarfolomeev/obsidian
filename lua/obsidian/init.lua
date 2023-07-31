@@ -207,4 +207,47 @@ H.read_file = function(path)
   return content
 end
 
+---@param command string
+---@param file*
+H.execute_os_command = function(command)
+  return assert(io.popen(command, 'r'))
+end
+
+---@param query string
+---@return table
+H.search_rg = function(query)
+  local cmd = {
+    'rg',
+    '--no-config',
+    '--fixed-strings',
+    '--type=md',
+    vim.fn.shellescape(query),
+    Obsidian.config.dir,
+    ' --json',
+  }
+  local result = {}
+  local rg_result = H.execute_os_command(table.concat(cmd, ' '))
+  for line in rg_result:lines() do
+    local decoded = vim.json.decode(line)
+    if decoded == nil then
+      goto continue
+    end
+    if decoded['type'] ~= 'match' then
+      goto continue
+    end
+    local match = {
+      path = decoded['data']['path']['text'],
+      text = decoded['data']['lines']['text'],
+      cursor = {
+        decoded['data']['line_number'],
+        decoded['data']['submatches'][1]["start"]
+      }
+    }
+    local preview = match.path:gsub(vim.fn.expand(Obsidian.config.dir), '') .. match.text
+    result[#result + 1] = vim.tbl_deep_extend("keep", match, { preview = preview })
+    ::continue::
+  end
+  return result
+end
+
 return Obsidian
