@@ -317,6 +317,20 @@ Obsidian.select_backlinks_telescope = function()
       :find()
 end
 
+Obsidian.found_wikilink_under_cursor = function ()
+  local line = vim.api.nvim_get_current_line()
+  local column = vim.api.nvim_win_get_cursor(0)[2] + 1
+  local pattern = "%[%[([^|%]]+)|?[^%]]*%]%]"
+  local open, close, filename = string.find(line, pattern)
+  while open do
+    if open <= column and column <= close then
+      return open, close, filename
+    end
+    open, close, filename = string.find(line, pattern, close + 1)
+  end
+  return nil, nil, nil
+end
+
 -- Helper functionality =======================================================
 
 ---Validating user configuration that it is correct
