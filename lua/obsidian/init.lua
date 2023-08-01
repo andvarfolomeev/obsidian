@@ -126,7 +126,7 @@ end
 ---
 --- Common ways to use this function:
 ---
---- - `Obsidian.open_today()` - open today note in |Obsidian.config.daily.dir| 
+--- - `Obsidian.open_today()` - open today note in |Obsidian.config.daily.dir|
 ---   with |Obsidian.cofnig.daily.format| format.
 ---
 --- - `vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)`
@@ -161,7 +161,7 @@ Obsidian.generate_template = function(template_content, filename)
 end
 
 --- Insert template to current buffer
---- 
+---
 ---@param template_path string
 Obsidian.insert_template = function(template_path)
   local processed_template =
@@ -173,14 +173,14 @@ end
 ---
 --- Common ways to use this function:
 ---
---- - `Obsidian.select_template()`- This brings up a vim.ui.select for selecting a 
----   template for later pasting into current buffer. 
+--- - `Obsidian.select_template()`- This brings up a vim.ui.select for selecting a
+---   template for later pasting into current buffer.
 ---
---- - `Obsidian.select_template('native')` - This brings up a vim.ui.select for selecting a 
----   template for later pasting into current buffer. 
+--- - `Obsidian.select_template('native')` - This brings up a vim.ui.select for selecting a
+---   template for later pasting into current buffer.
 ---
---- - `Obsidian.select_template('telescope')`- This brings up a telescope for selecting a 
----   template for later pasting into current buffer. 
+--- - `Obsidian.select_template('telescope')`- This brings up a telescope for selecting a
+---   template for later pasting into current buffer.
 ---@param method_str __obsidian_select_method
 Obsidian.select_template = function(method_str)
   local methods = {
@@ -228,7 +228,7 @@ end
 ---
 --- Common ways to use this function:
 ---
---- - `Obsidian.search_note()` - This brings up a telescope for search a 
+--- - `Obsidian.search_note()` - This brings up a telescope for search a
 ---   notes in |Obsidian.config.dir|
 Obsidian.search_note = function()
   local actions = require('telescope.actions')
@@ -244,13 +244,13 @@ end
 ---
 --- Common ways to use this function:
 ---
---- - `Obsidian.select_backlinks()` - This brings up a vim.ui.select for search a 
+--- - `Obsidian.select_backlinks()` - This brings up a vim.ui.select for search a
 ---   backlinks for current note.
 ---
---- - `Obsidian.select_backlinks('native')` - This brings up a vim.ui.select for search a 
+--- - `Obsidian.select_backlinks('native')` - This brings up a vim.ui.select for search a
 ---   backlinks for current note.
 ---
---- - `Obsidian.select_backlinks('telescope')` - This brings up a telescope for search a 
+--- - `Obsidian.select_backlinks('telescope')` - This brings up a telescope for search a
 ---   backlinks for current note.
 ---@param method_str __obsidian_select_method
 Obsidian.select_backlinks = function(method_str)
@@ -317,7 +317,7 @@ Obsidian.select_backlinks_telescope = function()
       :find()
 end
 
-Obsidian.found_wikilink_under_cursor = function ()
+Obsidian.found_wikilink_under_cursor = function()
   local line = vim.api.nvim_get_current_line()
   local column = vim.api.nvim_win_get_cursor(0)[2] + 1
   local pattern = "%[%[([^|%]]+)|?[^%]]*%]%]"
