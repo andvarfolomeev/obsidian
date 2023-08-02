@@ -62,6 +62,8 @@ Default values:
     templates = {
       -- Optional, the path to templates directory
       dir = 'templates/',
+      date = '%Y-%d-%m',
+      time = '%Y-%d-%m',
     },
     note = {
       -- Optional, the path to general notes directory
@@ -112,7 +114,7 @@ Open today note
 
 Common ways to use this function:
 
-- `Obsidian.open_today()` - open today note in |Obsidian.config.daily.dir| 
+- `Obsidian.open_today()` - open today note in |Obsidian.config.daily.dir|
   with |Obsidian.cofnig.daily.format| format.
 
 - `vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)`
@@ -148,14 +150,14 @@ Select template
 
 Common ways to use this function:
 
-- `Obsidian.select_template()`- This brings up a vim.ui.select for selecting a 
-  template for later pasting into current buffer. 
+- `Obsidian.select_template()`- This brings up a vim.ui.select for selecting a
+  template for later pasting into current buffer.
 
-- `Obsidian.select_template('native')` - This brings up a vim.ui.select for selecting a 
-  template for later pasting into current buffer. 
+- `Obsidian.select_template('native')` - This brings up a vim.ui.select for selecting a
+  template for later pasting into current buffer.
 
-- `Obsidian.select_template('telescope')`- This brings up a telescope for selecting a 
-  template for later pasting into current buffer. 
+- `Obsidian.select_template('telescope')`- This brings up a telescope for selecting a
+  template for later pasting into current buffer.
 Parameters~
 {method_str} `(string)` - one of selection method. It can equal 'native' or 'telescope'
 
@@ -178,7 +180,7 @@ Search note
 
 Common ways to use this function:
 
-- `Obsidian.search_note()` - This brings up a telescope for search a 
+- `Obsidian.search_note()` - This brings up a telescope for search a
   notes in |Obsidian.config.dir|
 
 ------------------------------------------------------------------------------
@@ -188,13 +190,13 @@ Select backlinks
 
 Common ways to use this function:
 
-- `Obsidian.select_backlinks()` - This brings up a vim.ui.select for search a 
+- `Obsidian.select_backlinks()` - This brings up a vim.ui.select for search a
   backlinks for current note.
 
-- `Obsidian.select_backlinks('native')` - This brings up a vim.ui.select for search a 
+- `Obsidian.select_backlinks('native')` - This brings up a vim.ui.select for search a
   backlinks for current note.
 
-- `Obsidian.select_backlinks('telescope')` - This brings up a telescope for search a 
+- `Obsidian.select_backlinks('telescope')` - This brings up a telescope for search a
   backlinks for current note.
 Parameters~
 {method_str} `(string)` - one of selection method. It can equal 'native' or 'telescope'
