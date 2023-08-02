@@ -75,6 +75,8 @@ Obsidian.config = {
   templates = {
     -- Optional, the path to templates directory
     dir = 'templates/',
+    date = '%Y-%d-%m',
+    time = '%Y-%d-%m',
   },
   note = {
     -- Optional, the path to general notes directory
@@ -151,8 +153,8 @@ end
 ---@return string
 Obsidian.generate_template = function(template_content, filename)
   local title_ = filename:gsub('%.md$', '')
-  local date = os.date('%Y-%m-%d')
-  local time = os.date('%H-%M')
+  local date = os.date(Obsidian.config.templates.date)
+  local time = os.date(Obsidian.config.templates.time)
   local result = template_content
       :gsub('{{%s*title%s*}}', title_)
       :gsub('{{%s*date%s*}}', date)
