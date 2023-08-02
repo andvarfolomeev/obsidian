@@ -440,4 +440,23 @@ H.search_rg = function(query)
   return result
 end
 
+---Search file with some name in vault.
+---@param filename string
+---@return table
+H.search_file = function(filename)
+  local cmd = {
+    'find',
+    Obsidian.config.dir,
+    '|',
+    'rg',
+    vim.fn.shellescape("/" .. filename),
+  }
+  local result = {}
+  local command_result = H.execute_os_command(table.concat(cmd, ' '))
+  for line in command_result:lines() do
+    result[#result + 1] = line
+  end
+  return result
+end
+
 return Obsidian
