@@ -331,6 +331,38 @@ Obsidian.found_wikilink_under_cursor = function()
   return nil, nil, nil
 end
 
+---Go to note by wiki link under cursor
+---
+--- Common ways to use this function:
+---
+--- - `Obsidian.got_to()`
+---
+--- It calls edit for file if file with it name only one.
+---
+--- It calls vim.ui.select if file with it name few. However, It calls edit for file
+--- too after selection.
+Obsidian.go_to = function()
+  local _, _, filename = Obsidian.found_wikilink_under_cursor()
+  if filename == nil then
+    print('It is not wikilink')
+    return
+  end
+  local matches = H.search_file(filename)
+  if #matches == 0 then
+    print('File not found')
+    return
+  end
+  if #matches == 1 then
+    vim.api.nvim_command('edit ' .. matches[1])
+    return
+  end
+  vim.ui.select(matches, {
+    prompt = 'Select file: ',
+  }, function(match)
+    vim.api.nvim_command('edit ' .. match)
+  end)
+end
+
 -- Helper functionality =======================================================
 
 ---Validating user configuration that it is correct
