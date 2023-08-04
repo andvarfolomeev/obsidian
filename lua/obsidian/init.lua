@@ -289,18 +289,37 @@ Obsidian.select_backlinks_telescope = function()
   local conf = require("telescope.config").values
   local actions = require('telescope.actions')
   local action_state = require('telescope.actions.state')
+  local entry_display = require("telescope.pickers.entry_display")
   local filename = vim.fn.expand('%:t'):gsub('%.md$', '')
   local query = '[[' .. filename
   local search_result = H.search_rg(query)
+
+  local displayer = entry_display.create({
+    separator = " ",
+    items = { { width = 50, }, { width = 10 }, { remaining = true } },
+  })
+
+  local function make_display(entry)
+    return displayer({
+      entry.path, entry.position, entry.text
+    })
+  end
+
   pickers.new({}, {
-    prompt_title = "colors",
+    prompt_title = "Backlinks",
     finder = finders.new_table {
       results = search_result,
       entry_maker = function(match)
+        local path = string.gsub(match.path, vim.fn.expand(Obsidian.config.dir), '')
+        local position = string.format("%d:%d", unpack(match.cursor))
+        local text = match.text
         return {
           value = match,
-          display = match.preview,
-          ordinal = match.preview,
+          display = make_display,
+          ordinal = path,
+          path = path,
+          position = position,
+          text = text,
         }
       end
     },
