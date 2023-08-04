@@ -213,7 +213,7 @@ Obsidian.select_template_telescope = function(callback)
   local action_state = require('telescope.actions.state')
   local find_files = require('telescope.builtin').find_files
   find_files({
-   prompt_title = 'Templates',
+    prompt_title = 'Templates',
     cwd = Obsidian.config.dir .. Obsidian.config.templates.dir,
     attach_mappings = function(prompt_bufnr, map)
       actions.select_default:replace(function()
