@@ -370,7 +370,10 @@ Obsidian.go_to = function()
   end
   local matches = H.search_file(filename)
   if #matches == 0 then
-    print('File not found')
+    local dir_path = vim.fn.expand("%:p:h")
+    local target_file = dir_path .. "/" .. H.resolve_md_extension(filename)
+    vim.api.nvim_command('edit ' .. target_file)
+    print('New file created')
     return
   end
   if #matches == 1 then
