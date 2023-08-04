@@ -479,7 +479,8 @@ end
 ---@return table
 H.search_file = function(filename)
   local cmd = {
-    'find',
+    'fd',
+    '--full-path',
     Obsidian.config.dir,
     '|',
     'rg',
