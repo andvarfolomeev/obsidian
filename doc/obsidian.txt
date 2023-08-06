@@ -201,5 +201,29 @@ Common ways to use this function:
 Parameters~
 {method_str} `(string)` - one of selection method. It can equal 'native' or 'telescope'
 
+------------------------------------------------------------------------------
+                                                              *Obsidian.go_to()*
+                               `Obsidian.go_to`()
+to note by wiki link under cursor
+
+Common ways to use this function:
+
+- `Obsidian.got_to()`
+
+It calls edit for file if file with it name only one.
+
+It calls vim.ui.select if file with it name few. However, It calls edit for file
+too after selection.
+
+------------------------------------------------------------------------------
+                                                     *Obsidian.get_cmp_source()*
+                          `Obsidian.get_cmp_source`()
+Cmp source
+
+Common ways to use this function:
+
+- `require('cmp').register_source('obsidian', require('obsidian').get_cmp_source().new())`
+Return~
+`(table)`
 
  vim:tw=78:ts=8:noet:ft=help:norl:

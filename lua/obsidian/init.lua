@@ -568,6 +568,9 @@ H.search_file = function(filename)
   return result
 end
 
+---Search files in vault
+---@param directory string
+---@return table
 H.get_list_of_files = function(directory)
   local cmd = {
     'fd',
