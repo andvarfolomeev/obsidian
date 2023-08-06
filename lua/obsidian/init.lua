@@ -387,6 +387,58 @@ Obsidian.go_to = function()
   end)
 end
 
+--- Cmp source
+---
+--- Common ways to use this function:
+---
+--- - `require('cmp').register_source('obsidian', require('obsidian').get_cmp_source().new())`
+---@return table
+Obsidian.get_cmp_source = function()
+  local source = {}
+
+  source.new = function()
+    return setmetatable({}, { __index = source })
+  end
+
+  source.complete = function(self, params, callback)
+    local before_line = params.context.cursor_before_line
+    if not string.find(string.reverse(before_line), "[[", 1, true) then
+      callback {
+        items = {},
+        isIncomplete = false,
+      }
+      return
+    end
+    local files = H.get_list_of_files(Obsidian.config.dir)
+    local items = vim.tbl_map(function(file)
+      local splitted_path = vim.split(file, "/")
+      local filename = splitted_path[#splitted_path]:gsub(".md", "")
+      return {
+        kind = 17,
+        label = file,
+        insertText = filename,
+      }
+    end, files)
+
+    callback {
+      items = items,
+      isIncomplete = false,
+    }
+  end
+
+  source.get_trigger_characters = function()
+    return { "[" }
+  end
+
+  source.is_available = function()
+    local vault_dir = vim.fn.expand(Obsidian.config.dir)
+    local file_dir = vim.fn.expand("%:p")
+    return string.find(file_dir, vault_dir, 1, true) == 1
+  end
+
+  return source
+end
+
 -- Helper functionality =======================================================
 
 ---Validating user configuration that it is correct
