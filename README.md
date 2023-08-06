@@ -3,7 +3,7 @@ Obsidian for Neovim (WIP)
 
 I often use Obsidian to take daily notes and maintain my knowledge base. This plugin allows you to use the basic functionality to work with Obsidian vaults.
 
-For full experience needs [nvim-telescope/telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) plugin (some search related features don't work without it). And it also needs CLI tools like [ripgrep](https://github.com/BurntSushi/ripgrep) and [find](https://linux.die.net/man/1/find).
+For full experience needs [nvim-telescope/telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) plugin (some search related features don't work without it). And it also needs CLI tools like [ripgrep](https://github.com/BurntSushi/ripgrep), [fd](https://github.com/sharkdp/fd) and [sd](https://github.com/chmln/sd).
 
 See more details in [Features](#features) and [help file](doc/obsidian.txt).
 
