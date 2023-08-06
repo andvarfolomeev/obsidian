@@ -379,6 +379,24 @@ Obsidian.go_to = function()
   end)
 end
 
+--- Rename current file with updating links
+---
+--- Common ways to use this function:
+---
+--- - `Obsidian.rename('new-note')`
+---
+--- - `vim.ui.input({ prompt = 'Rename file to' }, function(name)`
+---   `  Obsidian.rename(name)`
+---   `end)`
+---@param filename string
+Obsidian.rename = function(new_name)
+  local filepath = vim.fn.expand("%:p")
+  local new_file = H.resolve_md_extension(vim.fn.expand("%:p:h") .. "/" .. new_name)
+  vim.loop.fs_rename(filepath, new_file)
+  H.replace_in_vault('[[' .. vim.fn.expand('%:t:r') .. ']]', '[[' .. new_name .. ']]')
+  vim.api.nvim_command('edit ' .. new_file)
+end
+
 --- Cmp source
 ---
 --- Common ways to use this function:
@@ -577,6 +595,22 @@ H.get_list_of_files = function(directory)
     result[#result + 1] = line
   end
   return result
+end
+
+H.replace_in_vault = function(old, new)
+  local cmd = {
+    'fd',
+    '--full-path',
+    Obsidian.config.dir,
+    '--type',
+    'file',
+    '--exec',
+    'sd',
+    '-s',
+    '"' .. old .. '"',
+    '"' .. new .. '"'
+  }
+  local command_result = H.execute_os_command(table.concat(cmd, ' '))
 end
 
 return Obsidian
