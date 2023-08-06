@@ -516,4 +516,20 @@ H.search_file = function(filename)
   return result
 end
 
+H.get_list_of_files = function(directory)
+  local cmd = {
+    'fd',
+    '--full-path',
+    directory,
+    '--type',
+    'file'
+  }
+  local result = {}
+  local command_result = H.execute_os_command(table.concat(cmd, ' '))
+  for line in command_result:lines() do
+    result[#result + 1] = line
+  end
+  return result
+end
+
 return Obsidian
