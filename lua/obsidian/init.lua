@@ -275,7 +275,7 @@ Obsidian.select_backlinks_native = function()
   vim.ui.select(search_result, {
     prompt = "Go to",
     format_item = function(match)
-      return match.preview
+      return match.path
     end
   }, function(match)
     vim.api.nvim_command('edit ' .. match.path)
@@ -296,30 +296,22 @@ Obsidian.select_backlinks_telescope = function()
 
   local displayer = entry_display.create({
     separator = " ",
-    items = { { width = 50, }, { width = 10 }, { remaining = true } },
+    items = { { width = 80, }, { remaining = true } },
   })
 
-  local function make_display(entry)
-    return displayer({
-      entry.path, entry.position, entry.text
-    })
-  end
+  local opts = {}
 
-  pickers.new({}, {
+  pickers.new(opts, {
     prompt_title = "Backlinks",
     finder = finders.new_table {
       results = search_result,
       entry_maker = function(match)
         local path = string.gsub(match.path, vim.fn.expand(Obsidian.config.dir), '')
-        local position = string.format("%d:%d", unpack(match.cursor))
-        local text = match.text
         return {
           value = match,
-          display = make_display,
+          display = match.path,
           ordinal = path,
           path = path,
-          position = position,
-          text = text,
         }
       end
     },
@@ -333,7 +325,7 @@ Obsidian.select_backlinks_telescope = function()
       end)
       return true
     end,
-    sorter = conf.generic_sorter({})
+    sorter = conf.generic_sorter(opts)
   })
       :find()
 end
