@@ -105,3 +105,7 @@ See more details in [Features](#features) and [help file](doc/obsidian.txt).
   },
 },
 ```
+
+## Similar plugins
+
+- [epwalsh/obsidian.nvim](https://github.com/epwalsh/obsidian.nvim)
