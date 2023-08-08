@@ -576,7 +576,7 @@ H.search_file = function(filename)
     Obsidian.config.dir,
     '|',
     'rg',
-    vim.fn.shellescape("/" .. filename),
+    vim.fn.shellescape("/" .. filename .. ".md"),
   }
   local result = {}
   local command_result = H.execute_os_command(table.concat(cmd, ' '))
