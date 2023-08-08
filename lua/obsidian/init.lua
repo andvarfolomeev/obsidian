@@ -233,8 +233,6 @@ end
 --- - `Obsidian.search_note()` - This brings up a telescope for search a
 ---   notes in |Obsidian.config.dir|
 Obsidian.search_note = function()
-  local actions = require('telescope.actions')
-  local action_state = require('telescope.actions.state')
   local find_files = require('telescope.builtin').find_files
   find_files({
     prompt_title = 'Select note',
