@@ -78,6 +78,27 @@ See more details in [Features](#features) and [help file](doc/obsidian.txt).
       end,
       desc = 'Select backlink',
     },
+    {
+      '<leader>or',
+      function()
+        vim.ui.input({ prompt = 'Rename file to' }, function(name)
+          Obsidian.rename(name)
+        end)
+      end,
+      desc = 'Rename file with updating links',
+    },
+    {
+      "gf",
+      function()
+        if Obsidian.found_wikilink_under_cursor() ~= nil then
+          return "<cmd>lua Obsidian.go_to()<CR>"
+        else
+          return "gf"
+        end
+      end,
+      noremap = false,
+      expr = true
+    }
   },
   opts = {
     dir = '~/Documents/SyncObsidian/',
