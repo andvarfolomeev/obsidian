@@ -51,9 +51,10 @@ Default values:
 >
 
   Obsidian.config = {
+    -- Optional, showing echo
+    silent = false,
     -- Optional, the path to vault directory
     dir = '~/ObsidianVault/',
-
     daily = {
       -- Optional, the path to daily notes directory
       dir = 'daily/',      -- Optional, It is mean that daily note directory is ~/ObsidianVault/daily/
@@ -214,6 +215,21 @@ It calls edit for file if file with it name only one.
 
 It calls vim.ui.select if file with it name few. However, It calls edit for file
 too after selection.
+
+------------------------------------------------------------------------------
+                                                             *Obsidian.rename()*
+                         `Obsidian.rename`({new_name})
+Rename current file with updating links
+
+Common ways to use this function:
+
+- `Obsidian.rename('new-note')`
+
+- `vim.ui.input({ prompt = 'Rename file to' }, function(name)`
+  `  Obsidian.rename(name)`
+  `end)`
+Parameters~
+{filename} `(string)`
 
 ------------------------------------------------------------------------------
                                                      *Obsidian.get_cmp_source()*
