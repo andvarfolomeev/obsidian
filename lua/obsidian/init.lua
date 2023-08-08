@@ -391,7 +391,17 @@ Obsidian.rename = function(new_name)
   local filepath = vim.fn.expand("%:p")
   local new_file = H.resolve_md_extension(vim.fn.expand("%:p:h") .. "/" .. new_name)
   vim.loop.fs_rename(filepath, new_file)
-  H.replace_in_vault('[[' .. vim.fn.expand('%:t:r') .. ']]', '[[' .. new_name .. ']]')
+  local old = {
+    [[\[\[]],
+    vim.fn.expand('%:t:r'),
+    '(\\|[^\\]\\[]+)?\\]\\]'
+  }
+  local new = {
+    '[[',
+    new_name,
+    '$1]]'
+  }
+  H.replace_in_vault(table.concat(old, ''), table.concat(new, ''))
   vim.api.nvim_command('edit ' .. new_file)
 end
 
@@ -604,9 +614,8 @@ H.replace_in_vault = function(old, new)
     'file',
     '--exec',
     'sd',
-    '-s',
-    '"' .. old .. '"',
-    '"' .. new .. '"'
+    "'" .. old .. "'",
+    "'" .. new .. "'"
   }
   local command_result = H.execute_os_command(table.concat(cmd, ' '))
 end
