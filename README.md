@@ -1,9 +1,8 @@
-Obsidian for Neovim (WIP)
-=============
+# Obsidian for Neovim (WIP)
 
 I often use Obsidian to take daily notes and maintain my knowledge base. This plugin allows you to use the basic functionality to work with Obsidian vaults.
 
-For full experience needs [nvim-telescope/telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) plugin (some search related features don't work without it). And it also needs CLI tools like [ripgrep](https://github.com/BurntSushi/ripgrep), [fd](https://github.com/sharkdp/fd) and [sd](https://github.com/chmln/sd).
+For full experience needs [nvim-telescope/telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) plugin, [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) plugin. And it also needs CLI tools like [ripgrep](https://github.com/BurntSushi/ripgrep), [fd](https://github.com/sharkdp/fd) and [sd](https://github.com/chmln/sd).
 
 See more details in [Features](#features) and [help file](doc/obsidian.txt).
 
@@ -12,9 +11,12 @@ See more details in [Features](#features) and [help file](doc/obsidian.txt).
 - Opening vault
 - Creating new notes
 - Creating/Opening daily notes
-- Selecting and inserting templates to buffer with support placeholders like: ``{{title}}``, ``{{date}}``, ``{time}}``
+- Selecting and inserting templates to buffer with support placeholders like: `{{title}}`, `{{date}}`, `{time}}`
 - Searching notes with Telescope integration
 - Searching backlinks of the current note
+- Going to file via wiki link
+- Renaming current note with updating wiki links
+- Autocomplete of wiki links with cmp integration
 
 ## Configuration example with lazy.nvim
 
