@@ -64,9 +64,10 @@ end
 ---@eval return MiniDoc.afterlines_to_code(MiniDoc.current.eval_section)
 
 Obsidian.config = {
+  -- Optional, showing echo
+  silent = false,
   -- Optional, the path to vault directory
   dir = '~/ObsidianVault/',
-
   daily = {
     -- Optional, the path to daily notes directory
     dir = 'daily/',      -- Optional, It is mean that daily note directory is ~/ObsidianVault/daily/
@@ -355,7 +356,7 @@ end
 Obsidian.go_to = function()
   local _, _, filename = Obsidian.found_wikilink_under_cursor()
   if filename == nil then
-    print('It is not wikilink')
+    H.echo("It is not wiki link")
     return
   end
   local matches = H.search_file(filename)
@@ -363,7 +364,7 @@ Obsidian.go_to = function()
     local dir_path = vim.fn.expand("%:p:h")
     local target_file = dir_path .. "/" .. H.resolve_md_extension(filename)
     vim.api.nvim_command('edit ' .. target_file)
-    print('New file created')
+    H.echo("New file created")
     return
   end
   if #matches == 1 then
@@ -477,6 +478,14 @@ H.create_autocommands = function(opts) end
 
 ---@param opts table|nil
 H.create_default_hl = function(opts) end
+
+H.echo = function(message)
+  if Obsidian.config.silent then return end
+  message = type(message) == 'string' and { { message } } or message
+  table.insert(message, 1, { '(Obsidian) ', 'WarningMsg' })
+  vim.cmd([[echo '' | redraw]])
+  vim.api.nvim_echo(message, true, {})
+end
 
 ---@param path string
 ---@return boolean
