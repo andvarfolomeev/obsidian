@@ -68,23 +68,18 @@ Obsidian.config = {
   silent = false,
   vaults = {
     {
-      -- Optional, the path to vault directory
       dir = '~/ObsidianVault/',
       daily = {
-        -- Optional, the path to daily notes directory
-        dir = 'daily/',      -- Optional, It is mean that daily note directory is ~/ObsidianVault/daily/
-        format = '%Y-%m-%d', -- Optional, format file names
+        dir = 'daily/',
+        format = '%Y-%m-%d',
       },
       templates = {
-        -- Optional, the path to templates directory
         dir = 'templates/',
         date = '%Y-%d-%m',
         time = '%Y-%d-%m',
       },
       note = {
-        -- Optional, the path to general notes directory
         dir = 'notes/',
-        -- Optional, the function for fransform name of note
         ---@param filename string
         ---@return string
         transformator = function(filename)
