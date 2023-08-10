@@ -611,6 +611,7 @@ H.search_file = function(filename)
   local cmd = {
     'fd',
     '--full-path',
+    '-a',
     Obsidian.get_current_vault().dir,
     '|',
     'rg',
