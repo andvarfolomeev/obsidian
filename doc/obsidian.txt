@@ -53,32 +53,31 @@ Default values:
   Obsidian.config = {
     -- Optional, showing echo
     silent = false,
-    -- Optional, the path to vault directory
-    dir = '~/ObsidianVault/',
-    daily = {
-      -- Optional, the path to daily notes directory
-      dir = 'daily/',      -- Optional, It is mean that daily note directory is ~/ObsidianVault/daily/
-      format = '%Y-%m-%d', -- Optional, format file names
-    },
-    templates = {
-      -- Optional, the path to templates directory
-      dir = 'templates/',
-      date = '%Y-%d-%m',
-      time = '%Y-%d-%m',
-    },
-    note = {
-      -- Optional, the path to general notes directory
-      dir = 'notes/',
-      -- Optional, the function for fransform name of note
-      ---@param filename string
-      ---@return string
-      transformator = function(filename)
-        if filename ~= nil and filename ~= '' then
-          return filename
-        end
-        return string.format('%d', os.time())
-      end,
-    },
+    vaults = {
+      {
+        dir = '~/ObsidianVault/',
+        daily = {
+          dir = 'daily/',
+          format = '%Y-%m-%d',
+        },
+        templates = {
+          dir = 'templates/',
+          date = '%Y-%d-%m',
+          time = '%Y-%d-%m',
+        },
+        note = {
+          dir = 'notes/',
+          ---@param filename string
+          ---@return string
+          transformator = function(filename)
+            if filename ~= nil and filename ~= '' then
+              return filename
+            end
+            return string.format('%d', os.time())
+          end,
+        },
+      }
+    }
   }
 <
 
@@ -98,13 +97,13 @@ Create new note
 
 Common ways to use this function:
 
-- `Obsidian.new_note('new-note')` - create note in |Obsidian.config.note.dir|.
+- `Obsidian.new_note('new-note')` - create note in |Obsidian.get_current_vault().note.dir|.
 
-- `Obsidian.new_note('new-note.md')` - create note in |Obsidian.config.note.dir|.
+- `Obsidian.new_note('new-note.md')` - create note in |Obsidian.get_current_vault().note.dir|.
 
 - `vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)`
   `  Obsidian.new_note(name)`
-  `end)` - create note in |Obsidian.config.note.dir|.
+  `end)` - create note in |Obsidian.get_current_vault().note.dir|.
 Parameters~
 {filename} `(string)`
 
@@ -115,8 +114,8 @@ Open today note
 
 Common ways to use this function:
 
-- `Obsidian.open_today()` - open today note in |Obsidian.config.daily.dir|
-  with |Obsidian.cofnig.daily.format| format.
+- `Obsidian.open_today()` - open today note in |Obsidian.get_current_vault().daily.dir|
+  with |Obsidian.get_current_vault().daily.format| format.
 
 - `vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)`
      `Obsidian.new_note(name)`
@@ -182,7 +181,7 @@ Search note
 Common ways to use this function:
 
 - `Obsidian.search_note()` - This brings up a telescope for search a
-  notes in |Obsidian.config.dir|
+  notes in |Obsidian.get_current_vault().dir|
 
 ------------------------------------------------------------------------------
                                                    *Obsidian.select_backlinks()*
