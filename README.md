@@ -17,33 +17,49 @@ See more details in [Features](#features) and [help file](doc/obsidian.txt).
 - Going to file via wiki link
 - Renaming current note with updating wiki links
 - Autocomplete of wiki links with cmp integration
+- Multi vault
 
 ## Configuration example with lazy.nvim
+
+I do not need to decorate functions in keys if you have only one vault in opts.vaults.
 
 ```lua
 {
   'ada0l/obsidian',
   keys = {
     {
+      '<leader>ov',
+      function()
+        Obsidian.select_vault()
+      end,
+      desc = "Select Obsidian vault",
+    },
+    {
       '<leader>oo',
       function()
-        Obsidian.cd_vault()
+        Obsidian.get_current_vault(function()
+          Obsidian.cd_vault()
+        end)
       end,
       desc = 'Open Obsidian directory',
     },
     {
       '<leader>ot',
       function()
-        Obsidian.open_today()
+        Obsidian.get_current_vault(function()
+          Obsidian.open_today()
+        end)
       end,
       desc = 'Open today',
     },
     {
       '<leader>od',
       function()
-        vim.ui.input({ prompt = 'Write shift in days: ' }, function(input_shift)
-          local shift = tonumber(input_shift) * 60 * 60 * 24
-          Obsidian.open_today(shift)
+        Obsidian.get_current_vault(function()
+          vim.ui.input({ prompt = 'Write shift in days: ' }, function(input_shift)
+            local shift = tonumber(input_shift) * 60 * 60 * 24
+            Obsidian.open_today(shift)
+          end)
         end)
       end,
       desc = 'Open daily node with shift',
@@ -51,8 +67,10 @@ See more details in [Features](#features) and [help file](doc/obsidian.txt).
     {
       '<leader>on',
       function()
-        vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)
-          Obsidian.new_note(name)
+        Obsidian.get_current_vault(function()
+          vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)
+            Obsidian.new_note(name)
+          end)
         end)
       end,
       desc = 'New note',
@@ -60,29 +78,46 @@ See more details in [Features](#features) and [help file](doc/obsidian.txt).
     {
       '<leader>oi',
       function()
-        Obsidian.select_template('telescope')
+        Obsidian.get_current_vault(function()
+          Obsidian.select_template('telescope')
+        end)
       end,
       desc = 'Insert template',
     },
     {
       '<leader>os',
       function()
-        Obsidian.search_note('telescope')
+        Obsidian.get_current_vault(function()
+          Obsidian.search_note('telescope')
+        end)
       end,
       desc = 'Search note',
     },
     {
       '<leader>ob',
       function()
-        Obsidian.select_backlinks('telescope')
+        Obsidian.get_current_vault(function()
+          Obsidian.select_backlinks('telescope')
+        end)
       end,
       desc = 'Select backlink',
     },
     {
+      '<leader>og',
+      function()
+        Obsidian.get_current_vault(function()
+          Obsidian.go_to()
+        end)
+      end,
+      desc = 'Go to file under cursor',
+    },
+    {
       '<leader>or',
       function()
-        vim.ui.input({ prompt = 'Rename file to' }, function(name)
-          Obsidian.rename(name)
+        Obsidian.get_current_vault(function()
+          vim.ui.input({ prompt = 'Rename file to' }, function(name)
+            Obsidian.rename(name)
+          end)
         end)
       end,
       desc = 'Rename file with updating links',
@@ -91,7 +126,7 @@ See more details in [Features](#features) and [help file](doc/obsidian.txt).
       "gf",
       function()
         if Obsidian.found_wikilink_under_cursor() ~= nil then
-          return "<cmd>lua Obsidian.go_to()<CR>"
+          return "<cmd>lua Obsidian.get_current_vault(function() Obsidian.go_to() end)<CR>"
         else
           return "gf"
         end
@@ -100,9 +135,48 @@ See more details in [Features](#features) and [help file](doc/obsidian.txt).
       expr = true
     }
   },
-  opts = {
-    dir = '~/Documents/SyncObsidian/',
-  },
+  opts = function()
+    ---@param filename string
+    ---@return string
+    local transformator = function(filename)
+      if filename ~= nil and filename ~= '' then
+        return filename
+      end
+      return string.format('%d', os.time())
+    end
+    return {
+      vaults = {
+        {
+          dir = '~/Documents/Knowledge/',
+          templates = {
+            dir = 'templates/',
+            date = '%Y-%d-%m',
+            time = '%Y-%d-%m',
+          },
+          note = {
+            dir = '',
+            transformator = transformator,
+          },
+        },
+        {
+          dir = '~/Documents/SyncObsidian/',
+          daily = {
+            dir = '01.daily/',
+            format = '%Y-%m-%d',
+          },
+          templates = {
+            dir = 'templates/',
+            date = '%Y-%d-%m',
+            time = '%Y-%d-%m',
+          },
+          note = {
+            dir = 'notes/',
+            transformator = transformator,
+          },
+        }
+      }
+    }
+  end
 },
 ```
 
