@@ -295,7 +295,7 @@ end
 
 Obsidian.select_backlinks_native = function()
   local filename = vim.fn.expand('%:t'):gsub('%.md$', '')
-  local query = '[[' .. filename
+  local query = "\\[\\[" .. filename .. '(\\|[^\\]\\[]+)?\\]\\]'
   local search_result = H.search_rg(query)
   vim.ui.select(search_result, {
     prompt = "Go to",
@@ -316,7 +316,7 @@ Obsidian.select_backlinks_telescope = function()
   local action_state = require('telescope.actions.state')
   local entry_display = require("telescope.pickers.entry_display")
   local filename = vim.fn.expand('%:t'):gsub('%.md$', '')
-  local query = '[[' .. filename
+  local query = "\\[\\[" .. filename .. '(\\|[^\\]\\[]+)?\\]\\]'
   local search_result = H.search_rg(query)
 
   local displayer = entry_display.create({
@@ -573,9 +573,8 @@ H.search_rg = function(query)
   local cmd = {
     'rg',
     '--no-config',
-    '--fixed-strings',
     '--type=md',
-    vim.fn.shellescape(query),
+    "'" .. query .. "'",
     Obsidian.get_current_vault().dir,
     ' --json',
   }
