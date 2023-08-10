@@ -21,7 +21,7 @@ See more details in [Features](#features) and [help file](doc/obsidian.txt).
 
 ## Configuration example with lazy.nvim
 
-I do not need to decorate functions in keys if you have only one vault in opts.vaults.
+You do not need to decorate functions in keys if you have only one vault in opts.vaults.
 
 ```lua
 {
