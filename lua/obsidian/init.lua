@@ -66,34 +66,65 @@ end
 Obsidian.config = {
   -- Optional, showing echo
   silent = false,
-  -- Optional, the path to vault directory
-  dir = '~/ObsidianVault/',
-  daily = {
-    -- Optional, the path to daily notes directory
-    dir = 'daily/',      -- Optional, It is mean that daily note directory is ~/ObsidianVault/daily/
-    format = '%Y-%m-%d', -- Optional, format file names
-  },
-  templates = {
-    -- Optional, the path to templates directory
-    dir = 'templates/',
-    date = '%Y-%d-%m',
-    time = '%Y-%d-%m',
-  },
-  note = {
-    -- Optional, the path to general notes directory
-    dir = 'notes/',
-    -- Optional, the function for fransform name of note
-    ---@param filename string
-    ---@return string
-    transformator = function(filename)
-      if filename ~= nil and filename ~= '' then
-        return filename
-      end
-      return string.format('%d', os.time())
-    end,
-  },
+  vaults = {
+    {
+      -- Optional, the path to vault directory
+      dir = '~/ObsidianVault/',
+      daily = {
+        -- Optional, the path to daily notes directory
+        dir = 'daily/',      -- Optional, It is mean that daily note directory is ~/ObsidianVault/daily/
+        format = '%Y-%m-%d', -- Optional, format file names
+      },
+      templates = {
+        -- Optional, the path to templates directory
+        dir = 'templates/',
+        date = '%Y-%d-%m',
+        time = '%Y-%d-%m',
+      },
+      note = {
+        -- Optional, the path to general notes directory
+        dir = 'notes/',
+        -- Optional, the function for fransform name of note
+        ---@param filename string
+        ---@return string
+        transformator = function(filename)
+          if filename ~= nil and filename ~= '' then
+            return filename
+          end
+          return string.format('%d', os.time())
+        end,
+      },
+    }
+  }
 }
 --minidoc_afterlines_end
+
+Obsidian.current_vault = nil
+
+Obsidian.get_current_vault = function(callback)
+  if Obsidian.current_vault == nil then
+    Obsidian.select_vault(callback)
+    return Obsidian.current_vault
+  end
+  if callback ~= nil then
+    callback(Obsidian.current_vault)
+  end
+  return Obsidian.current_vault
+end
+
+Obsidian.select_vault = function(callback)
+  vim.ui.select(Obsidian.config.vaults, {
+    prompt = "Select vault: ",
+    format_item = function(vaults)
+      return vaults.dir
+    end
+  }, function(vault)
+    Obsidian.current_vault = vault
+    if callback ~= nil then
+      callback(Obsidian.current_vault)
+    end
+  end)
+end
 
 --- Open vault directory
 ---
@@ -101,25 +132,25 @@ Obsidian.config = {
 ---
 --- - `Obsidian.cd_vault()` - open directory - This moves your working directory to the vault.
 Obsidian.cd_vault = function()
-  vim.api.nvim_command('cd ' .. Obsidian.config.dir)
+  vim.api.nvim_command('cd ' .. Obsidian.get_current_vault().dir)
 end
 
 --- Create new note
 ---
 --- Common ways to use this function:
 ---
---- - `Obsidian.new_note('new-note')` - create note in |Obsidian.config.note.dir|.
+--- - `Obsidian.new_note('new-note')` - create note in |Obsidian.get_current_vault().note.dir|.
 ---
---- - `Obsidian.new_note('new-note.md')` - create note in |Obsidian.config.note.dir|.
+--- - `Obsidian.new_note('new-note.md')` - create note in |Obsidian.get_current_vault().note.dir|.
 ---
 --- - `vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)`
 ---   `  Obsidian.new_note(name)`
----   `end)` - create note in |Obsidian.config.note.dir|.
+---   `end)` - create note in |Obsidian.get_current_vault().note.dir|.
 ---@param filename string
 Obsidian.new_note = function(filename)
   local filepath = H.prepare_path(
-    Obsidian.config.note.transformator(filename),
-    Obsidian.config.note.dir,
+    Obsidian.get_current_vault().note.transformator(filename),
+    Obsidian.get_current_vault().note.dir,
     true
   )
   vim.api.nvim_command('edit ' .. filepath)
@@ -129,8 +160,8 @@ end
 ---
 --- Common ways to use this function:
 ---
---- - `Obsidian.open_today()` - open today note in |Obsidian.config.daily.dir|
----   with |Obsidian.cofnig.daily.format| format.
+--- - `Obsidian.open_today()` - open today note in |Obsidian.get_current_vault().daily.dir|
+---   with |Obsidian.get_current_vault().daily.format| format.
 ---
 --- - `vim.ui.input({ prompt = 'Write name of new note: ' }, function(name)`
 ---      `Obsidian.new_note(name)`
@@ -139,8 +170,8 @@ end
 Obsidian.open_today = function(shift)
   local time = os.time() + (shift or 0)
   local filepath = H.prepare_path(
-    tostring(os.date(Obsidian.config.daily.format, time)),
-    Obsidian.config.daily.dir,
+    tostring(os.date(Obsidian.get_current_vault().daily.format, time)),
+    Obsidian.get_current_vault().daily.dir,
     true
   )
   vim.api.nvim_command('edit ' .. filepath)
@@ -154,8 +185,8 @@ end
 ---@return string
 Obsidian.generate_template = function(template_content, filename)
   local title_ = filename:gsub('%.md$', '')
-  local date = os.date(Obsidian.config.templates.date)
-  local time = os.date(Obsidian.config.templates.time)
+  local date = os.date(Obsidian.get_current_vault().templates.date)
+  local time = os.date(Obsidian.get_current_vault().templates.time)
   local result = template_content
       :gsub('{{%s*title%s*}}', title_)
       :gsub('{{%s*date%s*}}', date)
@@ -202,7 +233,7 @@ end
 ---@param callback function
 Obsidian.select_template_native = function(callback)
   local template_files =
-      vim.fn.glob(Obsidian.config.dir .. Obsidian.config.templates.dir .. '*', false, true)
+      vim.fn.glob(Obsidian.get_current_vault().dir .. Obsidian.get_current_vault().templates.dir .. '*', false, true)
   vim.ui.select(template_files, {
     prompt = 'Select template: ',
   }, callback)
@@ -215,12 +246,12 @@ Obsidian.select_template_telescope = function(callback)
   local find_files = require('telescope.builtin').find_files
   find_files({
     prompt_title = 'Templates',
-    cwd = Obsidian.config.dir .. Obsidian.config.templates.dir,
+    cwd = Obsidian.get_current_vault().dir .. Obsidian.get_current_vault().templates.dir,
     attach_mappings = function(prompt_bufnr, map)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
-        callback(Obsidian.config.dir .. Obsidian.config.templates.dir .. selection[1])
+        callback(Obsidian.get_current_vault().dir .. Obsidian.get_current_vault().templates.dir .. selection[1])
       end)
       return true
     end,
@@ -232,12 +263,12 @@ end
 --- Common ways to use this function:
 ---
 --- - `Obsidian.search_note()` - This brings up a telescope for search a
----   notes in |Obsidian.config.dir|
+---   notes in |Obsidian.get_current_vault().dir|
 Obsidian.search_note = function()
   local find_files = require('telescope.builtin').find_files
   find_files({
     prompt_title = 'Select note',
-    cwd = Obsidian.config.dir,
+    cwd = Obsidian.get_current_vault().dir,
   })
 end
 
@@ -305,7 +336,7 @@ Obsidian.select_backlinks_telescope = function()
     finder = finders.new_table {
       results = search_result,
       entry_maker = function(match)
-        local path = string.gsub(match.path, vim.fn.expand(Obsidian.config.dir), '')
+        local path = string.gsub(match.path, vim.fn.expand(Obsidian.get_current_vault().dir), '')
         return {
           value = match,
           display = match.path,
@@ -428,7 +459,7 @@ Obsidian.get_cmp_source = function()
       }
       return
     end
-    local files = H.get_list_of_files(Obsidian.config.dir)
+    local files = H.get_list_of_files(Obsidian.get_current_vault().dir)
     local items = vim.tbl_map(function(file)
       local splitted_path = vim.split(file, "/")
       local filename = splitted_path[#splitted_path]:gsub(".md", "")
@@ -450,7 +481,7 @@ Obsidian.get_cmp_source = function()
   end
 
   source.is_available = function()
-    local vault_dir = vim.fn.expand(Obsidian.config.dir)
+    local vault_dir = vim.fn.expand(Obsidian.get_current_vault().dir)
     local file_dir = vim.fn.expand("%:p")
     return string.find(file_dir, vault_dir, 1, true) == 1
   end
@@ -471,6 +502,9 @@ end
 ---@param opts table|nil
 H.apply_config = function(opts)
   Obsidian.config = vim.tbl_deep_extend('force', Obsidian.config, opts)
+  if opts ~= nil and #opts.vaults == 1 then
+    Obsidian.current_vault = opts.vaults[1]
+  end
 end
 
 ---@param opts table|nil
@@ -506,11 +540,11 @@ end
 ---@return string
 H.prepare_path = function(filename, subdir, create_dir)
   local processed_filename = H.resolve_md_extension(filename)
-  local dir = Obsidian.config.dir .. subdir
+  local dir = Obsidian.get_current_vault().dir .. subdir
   if create_dir and not H.directory_exist(dir) then
     H.create_dir_force(vim.fn.expand(dir))
   end
-  local filepath = Obsidian.config.dir .. subdir .. processed_filename
+  local filepath = Obsidian.get_current_vault().dir .. subdir .. processed_filename
   return filepath
 end
 
@@ -547,7 +581,7 @@ H.search_rg = function(query)
     '--fixed-strings',
     '--type=md',
     vim.fn.shellescape(query),
-    Obsidian.config.dir,
+    Obsidian.get_current_vault().dir,
     ' --json',
   }
   local result = {}
@@ -568,7 +602,7 @@ H.search_rg = function(query)
         decoded['data']['submatches'][1]["start"]
       }
     }
-    local preview = match.path:gsub(vim.fn.expand(Obsidian.config.dir), '') .. match.text
+    local preview = match.path:gsub(vim.fn.expand(Obsidian.get_current_vault().dir), '') .. match.text
     result[#result + 1] = vim.tbl_deep_extend("keep", match, { preview = preview })
     ::continue::
   end
@@ -582,7 +616,7 @@ H.search_file = function(filename)
   local cmd = {
     'fd',
     '--full-path',
-    Obsidian.config.dir,
+    Obsidian.get_current_vault().dir,
     '|',
     'rg',
     vim.fn.shellescape("/" .. filename .. ".md"),
@@ -618,7 +652,7 @@ H.replace_in_vault = function(old, new)
   local cmd = {
     'fd',
     '--full-path',
-    Obsidian.config.dir,
+    Obsidian.get_current_vault().dir,
     '--type',
     'file',
     '--exec',
