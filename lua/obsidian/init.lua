@@ -476,9 +476,13 @@ Obsidian.get_cmp_source = function()
   end
 
   source.is_available = function()
-    local vault_dir = vim.fn.expand(Obsidian.get_current_vault().dir)
     local file_dir = vim.fn.expand("%:p")
-    return string.find(file_dir, vault_dir, 1, true) == 1
+    for _, vault in pairs(Obsidian.config.vaults) do
+      if string.find(file_dir, vault.dir, 1, true) == 1 then
+        return true
+      end
+    end
+    return false
   end
 
   return source
